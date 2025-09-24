@@ -1,0 +1,33 @@
+package com.joseLeo.ecommerce.controller;
+
+import com.joseLeo.ecommerce.entity.Category;
+import com.joseLeo.ecommerce.service.CategoryService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/categories")
+public class CategoryController {
+
+    private final CategoryService service;
+
+    public CategoryController(CategoryService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<Category> getAll() {
+        return service.getAllCategories();
+    }
+
+    @PostMapping
+    public Category save(@RequestBody Category category) {
+        return service.saveCategory(category);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteCategory(id);
+    }
+}
