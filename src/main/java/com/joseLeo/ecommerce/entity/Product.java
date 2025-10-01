@@ -11,7 +11,10 @@ public class Product {
     private String name;
     private String description;
     private double price;
-    private String category;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id") // columna en la tabla products
+    private Category category;
     private int stock;
 
     // Getters y setters
@@ -23,8 +26,8 @@ public class Product {
     public void setDescription(String description) { this.description = description; }
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
     public int getStock() { return stock; }
     public void setStock(int stock) { this.stock = stock; }
 }

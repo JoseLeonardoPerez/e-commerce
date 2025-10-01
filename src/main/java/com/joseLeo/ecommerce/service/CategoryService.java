@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public class CategoryService {
-    private final CategoryRepository repository;
+    private static  CategoryRepository repository = null;
 
     public CategoryService(CategoryRepository repository) {
         this.repository = repository;
@@ -17,11 +17,11 @@ public class CategoryService {
         return repository.findAll();
     }
 
-    public Category getCategoryById(Long id) {
+    public static Category getCategoryById(Long id) {
         return repository.findById(id).orElse(null);
     }
 
-    public Category saveCategory(Category category) {
+    public static Category saveCategory(Category category) {
         return repository.save(category);
     }
 

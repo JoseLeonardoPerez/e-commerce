@@ -1,19 +1,18 @@
 package com.joseLeo.ecommerce.service;
 
 import com.joseLeo.ecommerce.entity.User;
-import com.joseLeo.ecommerce.repository.UserRepository;
-import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
 
-@Service
-public class UserService {
-    private final UserRepository repository;
+public interface UserService {
+    User registerUser(User user);
+    List<User> getAllUsers();
+    Optional<User> getUserById(Long id);
+    void deleteUser(Long id);
 
-    public UserService(UserRepository repository) {
-        this.repository = repository;
-    }
+    User updateUser(Long id, User user); // 👈 nuevo
 
-    public User registerUser(User user) {
-        // Más adelante podrías encriptar la contraseña
-        return repository.save(user);
-    }
+    // Método extra para login temporal
+    User authenticate(String email, String password);
 }
+

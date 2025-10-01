@@ -1,5 +1,6 @@
 package com.joseLeo.ecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -12,7 +13,8 @@ public class Cart {
     @OneToOne
     private User user;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<CartItem> items;
 
     public Long getId() {
@@ -37,7 +39,8 @@ public class Cart {
 
     public void setItems(List<CartItem> items) {
         this.items = items;
+        if (items != null) {
+            items.forEach(item -> item.setCart(this)); // 🔑 asegura relación bidireccional
+        }
     }
-
-    // getters y setters
 }

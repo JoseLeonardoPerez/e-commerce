@@ -1,5 +1,6 @@
 package com.joseLeo.ecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -11,7 +12,8 @@ public class Category {
 
     private String name;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Product> products;
 
     public Long getId() {

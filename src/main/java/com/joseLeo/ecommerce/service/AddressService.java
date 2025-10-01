@@ -3,6 +3,7 @@ package com.joseLeo.ecommerce.service;
 import com.joseLeo.ecommerce.entity.Address;
 import com.joseLeo.ecommerce.repository.AddressRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -27,5 +28,9 @@ public class AddressService {
 
     public void deleteAddress(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<Address> getAddressesByUserId(Long userId) {
+        return repository.findByUserId(userId);
     }
 }
