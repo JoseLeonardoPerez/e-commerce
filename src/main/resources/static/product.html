@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle del Producto - Titan Fishing</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+  <img src="/images/logo2_white.png" alt="Titan Fishing Logo">
+  <nav>
+    <a href="/index.html">Inicio</a>
+    <a href="/tienda.html">Tienda</a>
+    <a href="CarritodelUsuario.html">Carrito</a>
+  </nav>
+</header>
+
+<main id="product-container">
+  <!-- Aquí se cargará el producto vía JS -->
+</main>
+
+<script>
+  const userLoggedIn = sessionStorage.getItem('user'); // simple ejemplo, luego puede venir de JWT o sesión real
+  const productId = new URLSearchParams(window.location.search).get('id');
+
+  if (!productId) {
+    document.getElementById('product-container').innerHTML = "<p>Producto no encontrado.</p>";
+  }
+
+  // Función para cargar producto desde API o base de datos
+  async function loadProduct() {
+    const res = await fetch(`/api/products/${productId}`);
+    const product = await res.json();
+
+    const container = document.getElementById('product-container');
+    container.innerHTML = `
+      <div class="product-detail">
+        <img src="${product.image}" alt="${product.name}" />
+        <h2>${product.name}</h2>
+        <p>${product.description}</p>
+        <div class="price">$${product.price}</div>
+        <button id="buyBtn">Comprar</button>
+      </div>
+    `;
+
+    document.getElementById('buyBtn').addEventListener('click', () => {
+      if (!userLoggedIn) {
+        // Redirigir a registro/login si no está logueado
+        window.location.href = "/register.html";
+      } else {
+        // Redirigir a checkout o agregar al carrito
+        window.location.href = `/checkout.html?productId=${productId}`;
+      }
+    });
+  }
+
+  loadProduct();
+</script>
+</body>
+</html>

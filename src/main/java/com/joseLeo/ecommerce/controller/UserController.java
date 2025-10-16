@@ -1,21 +1,33 @@
 package com.joseLeo.ecommerce.controller;
 
 import com.joseLeo.ecommerce.entity.User;
+import com.joseLeo.ecommerce.entity.Address;
+import com.joseLeo.ecommerce.repository.AddressRepository;
+import com.joseLeo.ecommerce.repository.UserRepository;
 import com.joseLeo.ecommerce.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
+
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
+
+    private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserRepository userRepository, AddressRepository addressRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
+        this.addressRepository = addressRepository;
     }
 
     // Registrar usuario
@@ -57,4 +69,34 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getLoggedUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("No autenticado");
+        }
+
+        String email = authentication.getName(); // correo del usuario logueado
+
+        User user = userRepository.findByEmail(email); // <-- asegúrate de tener este método en UserRepository
+
+        if (user == null) {
+            return ResponseEntity.status(404).body("Usuario no encontrado");
+        }
+
+        List<Address> addresses = addressRepository.findByUserId(user.getId());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", user.getId());
+        response.put("name", user.getName());
+        response.put("email", user.getEmail());
+        response.put("addresses", addresses);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
+
 }

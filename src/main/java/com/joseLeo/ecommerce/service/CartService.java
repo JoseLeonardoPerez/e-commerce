@@ -7,8 +7,10 @@ import com.joseLeo.ecommerce.entity.User;
 import com.joseLeo.ecommerce.repository.CartRepository;
 import com.joseLeo.ecommerce.repository.ProductRepository;
 import com.joseLeo.ecommerce.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,4 +72,43 @@ public class CartService {
     public void deleteCartByUserId(Long userId) {
         cartRepository.findByUserId(userId).ifPresent(cartRepository::delete);
     }
+
+    @Transactional
+    public Cart addProductToCart(Long userId, Long productId, int quantity) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        Cart cart = cartRepository.findByUserId(userId).orElseGet(() -> {
+            Cart c = new Cart();
+            c.setUser(user);
+            c.setItems(new ArrayList<>()); // Asegura que no sea null
+            return c;
+        });
+
+        CartItem existingItem = null;
+        if (cart.getItems() != null) {
+            for (CartItem item : cart.getItems()) {
+                if (item.getProduct().getId().equals(productId)) {
+                    existingItem = item;
+                    break;
+                }
+            }
+        }
+
+        if (existingItem != null) {
+            existingItem.setQuantity(existingItem.getQuantity() + quantity);
+        } else {
+            CartItem newItem = new CartItem();
+            newItem.setProduct(product);
+            newItem.setQuantity(quantity);
+            newItem.setCart(cart);
+            cart.getItems().add(newItem);
+        }
+
+        return cartRepository.save(cart);
+    }
+
 }

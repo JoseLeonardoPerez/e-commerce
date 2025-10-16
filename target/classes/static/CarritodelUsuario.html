@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - Titan Fishing</title>
+    <style>
+@import url('https://fonts.cdnfonts.com/css/bahnschrift');
+
+/* --- BODY Y FONDO --- */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Bahnschrift SemiLight', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInBody 1.2s ease-in-out forwards; /* solo opacidad */
+}
+
+@keyframes fadeInBody {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: url("images/caña de pescar4.jpeg") no-repeat center center fixed;
+  background-size: cover;
+  filter: brightness(50%);
+  z-index: 0;
+}
+
+/* --- HEADER --- */
+header {
+  background-color: rgba(3,6,102,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  padding: 0 30px;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+header .logo-container img { height: 150px; width: auto; }
+
+header nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  flex: 1;
+  margin-left: 30px;
+}
+
+header nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+header nav a:hover { color: #ffcc00; }
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.center-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  flex: 1;
+  z-index: 5;
+  margin-top: 120px;
+  padding-bottom: 100px;
+  width: 100%;
+}
+
+h1 { color: white; margin-bottom: 20px; }
+
+/* --- TABLA DE PRODUCTOS --- */
+.cart-table {
+  width: 90%;
+  max-width: 900px;
+  background: rgba(255,255,255,0.95);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.cart-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 15px;
+}
+
+.cart-item-info {
+  flex: 1;
+}
+
+.cart-item-info h3 { margin: 0; font-size: 1rem; color:#030666; }
+.cart-item-info p { margin: 5px 0 0 0; font-weight: bold; color:#021a99; }
+
+.cart-item input[type="checkbox"] { transform: scale(1.3); margin-left: 15px; cursor: pointer; }
+
+/* --- INPUT CANTIDAD --- */
+.cart-item input[type="number"] {
+  width: 60px;
+  padding: 5px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-left: 10px;
+}
+
+/* --- BOTONES --- */
+.cart-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.cart-buttons button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  background-color: #030666;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.cart-buttons button:hover { background-color: #021a99; }
+.cart-buttons button:disabled { background-color: #555; cursor: not-allowed; }
+
+/* --- TOTAL --- */
+.cart-total {
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 15px;
+  color: #030666;
+}
+
+/* --- FOOTER --- */
+footer {
+  background: rgba(3,6,102,0.85);
+  color: white;
+  text-align: center;
+  padding: 15px 20px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+footer a { color: white; text-decoration: none; font-weight: bold; transition: color 0.3s; }
+footer a:hover { color: #ffcc00; }
+
+@media(max-width:768px){
+  .cart-item { flex-direction: column; align-items:flex-start; }
+  .cart-item img { margin-bottom: 10px; }
+  .cart-buttons { justify-content:center; }
+}
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <img src="images/logo2_white4.png" alt="Titan Fishing Logo">
+    </div>
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="tienda.html">Tienda</a>
+        <a href="CarritodelUsuario.html">Carrito</a>
+        <a href="micuenta.html">Mi cuenta</a>
+    </nav>
+</header>
+
+<div class="center-container">
+    <h1>Carrito de Compras</h1>
+
+    <div class="cart-table" id="cartTable"></div>
+    <div class="cart-total" id="cartTotal">Total: $0.00</div>
+
+    <div class="cart-buttons">
+        <button onclick="window.location.href='tienda.html'">Seguir Comprando</button>
+        <button id="buyButton">Comprar</button>
+        <button id="deleteButton" disabled>Eliminar Seleccionados</button>
+    </div>
+</div>
+
+<footer>
+    <a href="#">Facebook</a>
+    <a href="#">Instagram</a>
+    <a href="#">Twitter</a>
+    <a href="#">YouTube</a>
+</footer>
+
+<script>
+let cartProducts = JSON.parse(localStorage.getItem('cart')) || [];
+
+const cartTable = document.getElementById('cartTable');
+const cartTotal = document.getElementById('cartTotal');
+const deleteButton = document.getElementById('deleteButton');
+const buyButton = document.getElementById('buyButton');
+
+function renderCart() {
+  cartTable.innerHTML = '';
+  let total = 0;
+
+  cartProducts.forEach((product, index) => {
+    total += product.precio * (product.cantidad || 1);
+
+    const item = document.createElement('div');
+    item.classList.add('cart-item');
+    item.innerHTML = `
+      <img src="${product.img}" alt="${product.nombre}">
+      <div class="cart-item-info">
+        <h3>${product.nombre}</h3>
+        <p>Precio: $${product.precio.toFixed(2)}</p>
+        <label>Cantidad: <input type="number" min="1" value="${product.cantidad || 1}" data-index="${index}"></label>
+      </div>
+      <input type="checkbox" data-index="${index}" onchange="updateDeleteButton()">
+    `;
+    cartTable.appendChild(item);
+  });
+
+  cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+}
+
+function updateDeleteButton() {
+  const checkboxes = document.querySelectorAll('.cart-item input[type="checkbox"]');
+  deleteButton.disabled = !Array.from(checkboxes).some(cb => cb.checked);
+}
+
+deleteButton.addEventListener('click', () => {
+  const checkboxes = document.querySelectorAll('.cart-item input[type="checkbox"]');
+  const toDelete = [];
+
+  checkboxes.forEach((cb, index) => {
+    if (cb.checked) toDelete.push(index);
+  });
+
+  toDelete.reverse().forEach(idx => {
+    cartProducts.splice(idx, 1);
+  });
+
+  localStorage.setItem('cart', JSON.stringify(cartProducts));
+  renderCart();
+  updateDeleteButton();
+});
+
+buyButton.addEventListener('click', () => {
+  if (cartProducts.length === 0) {
+    alert("No hay productos en el carrito.");
+    return;
+  }
+
+  const productsForOrder = cartProducts.map(p => ({
+    nombre: p.nombre,
+    precio: p.precio,
+    cantidad: p.cantidad || 1,
+    img: p.img
+  }));
+
+  localStorage.setItem('currentPurchase', JSON.stringify(productsForOrder));
+  window.location.href = '/order';
+});
+
+// Actualizar cantidades en tiempo real
+cartTable.addEventListener('input', (e) => {
+  if (e.target.type === 'number') {
+    const idx = e.target.dataset.index;
+    cartProducts[idx].cantidad = parseInt(e.target.value) || 1;
+    localStorage.setItem('cart', JSON.stringify(cartProducts));
+    renderCart();
+  }
+});
+
+renderCart();
+</script>
+
+</body>
+</html>

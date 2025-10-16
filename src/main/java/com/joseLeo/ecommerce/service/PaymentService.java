@@ -16,10 +16,12 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+    private final InvoiceService invoiceService;
 
-    public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository) {
+    public PaymentService(PaymentRepository paymentRepository, OrderRepository orderRepository, InvoiceService invoiceService) {
         this.paymentRepository = paymentRepository;
         this.orderRepository = orderRepository;
+        this.invoiceService = invoiceService;
     }
 
     // Listar todos los pagos
@@ -83,7 +85,25 @@ public class PaymentService {
                 break;
         }
 
-        return paymentRepository.save(payment);
+        // Después de guardar el pago exitosamente, generar factura automáticamente
+        Payment savedPayment = paymentRepository.save(payment);
+
+// Solo generar factura si el pago fue completado
+        if (savedPayment.getStatus() == PaymentStatus.COMPLETED) {
+            try {
+                com.joseLeo.ecommerce.entity.Invoice invoice = new com.joseLeo.ecommerce.entity.Invoice();
+                invoice.setOrder(order);
+                // Usamos el InvoiceService existente
+
+                invoiceService.saveInvoice(invoice);
+            } catch (Exception e) {
+                System.err.println("No se pudo generar la factura: " + e.getMessage());
+            }
+        }
+
+        return savedPayment;
+
+        //return paymentRepository.save(payment);
     }
 
 }

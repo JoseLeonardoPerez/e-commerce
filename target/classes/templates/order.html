@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Resumen de Orden</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.cdnfonts.com/css/bahnschrift');
+
+    /* Reset básico */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Bahnschrift SemiLight', sans-serif;
+      color: black;
+      background: #000;
+      overflow-x: hidden;
+    }
+
+    /* Fondo difuminado (imagen compra.jpg) */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('/images/compra.jpg') center center no-repeat;
+      background-size: cover;
+      filter: blur(5px) brightness(0.45);
+      z-index: -2;
+    }
+
+    body {
+      opacity: 0;
+      animation: aparecer 0.6s ease-in-out forwards;
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* === HEADER (idéntico a las otras páginas) === */
+    header {
+      background-color: rgba(3,6,102,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100px;
+      padding: 0 30px;
+      z-index: 10;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    header .logo-container img {
+      height: 150px;
+      width: auto;
+    }
+
+    header nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 25px;
+      flex: 1;
+      margin-left: 30px;
+    }
+
+    header nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: color 0.3s;
+    }
+
+    header nav a:hover {
+      color: #ffcc00;
+    }
+
+    /* Contenedor principal similar a las otras páginas */
+    .contenedor {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+      padding-top: 140px; /* espacio para header fijo */
+      padding-bottom: 100px;
+      min-height: 100vh;
+    }
+
+    /* Card central de resumen (legible sobre el fondo) */
+    .card {
+      width: 100%;
+      max-width: 700px;
+      background: rgba(255,255,255,0.95);
+      color: #222;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      animation: cardAppear 0.6s ease-in-out;
+    }
+
+    @keyframes cardAppear {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 { text-align: center; margin-bottom: 14px; color: #030666; }
+    p { margin-bottom: 8px; }
+    ul { margin: 10px 0 14px 20px; }
+    ul li { margin: 6px 0; }
+
+    /* === MÉTODOS DE PAGO === */
+    .payment-methods label {
+      display: flex;
+      align-items: center;
+      gap: 8px; /* espacio entre texto y logo */
+      margin: 8px 0;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .payment-methods img {
+      width: 100px;  /* tamaño miniatura */
+      height: auto;
+      display: inline-block;
+    }
+
+    .total { margin-top:10px; font-weight:700; }
+
+    button {
+      background-color: #036;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    button:hover { background-color: #024; }
+
+    /* Footer exactamente igual */
+    footer {
+      background: rgba(34,34,34,0.95);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 3;
+    }
+
+    /* Responsive igual que las otras páginas */
+    @media screen and (max-width: 1024px) {
+      header {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 10px;
+      }
+      header .logo-container img { height: 100px; margin-bottom: 10px; }
+      header nav { gap: 10px; justify-content: center; margin-right: 0; }
+      .card { padding: 20px; max-width: 90%; }
+    }
+
+    @media screen and (max-width: 600px) {
+      .card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-container">
+    <img src="/images/logo2_white4.png" alt="Titan Fishing Logo">
+  </div>
+  <nav>
+    <a href="/index.html">Inicio</a>
+    <a href="/tienda.html">Tienda</a>
+    <a href="/CarritodelUsuario.html">Carrito</a>
+    <a href="/lineasyanzuelos.html">Líneas y Anzuelos</a>
+    <a href="/senuelosycarnadas.html">Señuelos y Carnadas</a>
+  </nav>
+</header>
+
+<main class="contenedor">
+  <div class="card" role="region" aria-label="Resumen de compra">
+    <h2>Resumen de tu compra</h2>
+
+    <p>Productos seleccionados:</p>
+    <ul id="listaProductos">
+      <li>Señuelo Spinnerbait FlashCatch - $5.99</li>
+    </ul>
+
+    <p class="total" id="totalPlaceholder"><strong>Total:</strong> $0.00</p>
+
+    <h3>Método de pago</h3>
+    <div class="payment-methods">
+      <label>
+        <input type="radio" name="paymentMethod" value="tarjeta">
+        Tarjeta de crédito o débito
+        <img th:src="@{/images/tarjetas-logos.png}"  alt="Tarjetas" title="Visa, MasterCard, American Express">
+      </label>
+
+      <label>
+        <input type="radio" name="paymentMethod" value="paypal">
+        PayPal
+        <img th:src="@{/images/paypallogo.png}" alt="PayPal">
+      </label>
+
+      <label>
+        <input type="radio" name="paymentMethod" value="mercadopago">
+        MercadoPago
+        <img th:src="@{/images/mercadopagologo.png}"  alt="MercadoPago">
+      </label>
+    </div>
+
+    <button id="confirmarCompraBtn">Confirmar compra</button>
+  </div>
+</main>
+
+<footer>
+  &copy; 2025 Titan Fishing | Síguenos en redes sociales
+</footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+      const lista = document.getElementById("listaProductos");
+      const totalPlaceholder = document.getElementById("totalPlaceholder");
+      const currentPurchase = JSON.parse(localStorage.getItem("currentPurchase")) || [];
+
+      lista.innerHTML = "";
+
+      if(currentPurchase.length === 0){
+          lista.innerHTML = "<li>No hay productos para procesar la orden.</li>";
+          totalPlaceholder.innerHTML = "<strong>Total:</strong> $0.00";
+          return;
+      }
+
+      let total = 0;
+
+      currentPurchase.forEach(p => {
+          total += (p.precio || 0) * (p.cantidad || 1);
+          const li = document.createElement("li");
+          li.textContent = `${p.nombre} - $${(p.precio || 0).toFixed(2)} x ${p.cantidad || 1}`;
+          lista.appendChild(li);
+      });
+
+      totalPlaceholder.innerHTML = `<strong>Total:</strong> $${total.toFixed(2)}`;
+
+      const confirmarBtn = document.getElementById("confirmarCompraBtn");
+      confirmarBtn.addEventListener("click", () => {
+          const metodoPago = document.querySelector('input[name="paymentMethod"]:checked');
+          if (!metodoPago) {
+              alert("⚠️ Por favor selecciona un método de pago antes de continuar.");
+              return;
+          }
+
+          localStorage.setItem("selectedPaymentMethod", metodoPago.value);
+
+          switch (metodoPago.value) {
+              case "tarjeta":
+                  window.location.href = "payment-card.html";
+                  break;
+              case "paypal":
+                  window.location.href = "payment-paypal.html";
+                  break;
+              case "mercadopago":
+                  window.location.href = "payment-mercadopago.html";
+                  break;
+              default:
+                  alert("Método de pago no válido.");
+          }
+      });
+  });
+</script>
+</body>
+</html>

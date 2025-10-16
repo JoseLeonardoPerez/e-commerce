@@ -30,7 +30,10 @@ public class Order {
     @OneToOne
     private Address shippingAddress;
 
-    // Getters y setters
+    // 🔹 Nuevo campo para guardar el total de la orden
+    private double totalAmount;
+
+    // --- Getters y setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -52,7 +55,10 @@ public class Order {
     public Address getShippingAddress() { return shippingAddress; }
     public void setShippingAddress(Address shippingAddress) { this.shippingAddress = shippingAddress; }
 
-    // Método para calcular total
+    public double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+
+    // 🔹 Método auxiliar (opcional)
     public double calculateTotal() {
         if (items == null) return 0.0;
         return items.stream()

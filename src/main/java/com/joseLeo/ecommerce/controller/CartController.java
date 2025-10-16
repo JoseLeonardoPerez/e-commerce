@@ -59,4 +59,29 @@ public class CartController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/users/{userId}/items")
+    public ResponseEntity<?> addItemToCart(
+            @PathVariable Long userId,
+            @RequestBody AddToCartRequest request) {
+
+        try {
+            Cart updated = cartService.addProductToCart(userId, request.getProductId(), request.getQuantity());
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // DTO interno para recibir datos del producto a agregar
+    public static class AddToCartRequest {
+        private Long productId;
+        private Integer quantity;
+
+        public Long getProductId() { return productId; }
+        public void setProductId(Long productId) { this.productId = productId; }
+        public Integer getQuantity() { return quantity; }
+        public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    }
+
 }

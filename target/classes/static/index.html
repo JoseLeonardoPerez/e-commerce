@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Fishing - Inicio</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Berlin Sans FB', sans-serif;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            color: black;
+            overflow: hidden;
+            opacity: 0;
+            animation: aparecer 0.8s ease-in-out forwards;
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        header {
+            background-color: rgba(3, 6, 102, 0.7);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        header nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero img {
+            max-width: 300px;
+            margin-bottom: 20px;
+            transform: translateY(-20px); /* subimos un poco el logo */
+        }
+
+        .eslogan {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        }
+
+        footer {
+            background: rgba(34,34,34,0.9);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .hero img {
+                max-width: 200px;
+                transform: translateY(-10px);
+            }
+
+            .eslogan {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body id="body">
+
+<header>
+    <nav>
+        <a href="#">Inicio</a>
+        <a href="tienda.html">Tienda</a>
+        <a href="CarritodelUsuario.html">Carrito</a>
+        <a href="micuenta.html">Mi cuenta</a>
+        <a href="nosotros.html">Nosotros</a>
+        <a href="register.html">Registrate</a>
+    </nav>
+</header>
+
+<div class="hero">
+    <img src="/images/logo2.png" alt="Logo Titan Fishing">
+    <div class="eslogan">
+        Bienvenido a Titan Fishing<br>
+        Donde tu aventura comienza!!
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 Titan Fishing | Síguenos en redes sociales
+</footer>
+
+<script>
+    const fondos = [
+        "/images/fondo.jpg",
+        "/images/fondo2.jpg",
+        "/images/fondo3.jpg"
+    ];
+    let indice = 0;
+    const body = document.getElementById("body");
+
+    function cambiarFondo() {
+        body.style.backgroundImage = `url(${fondos[indice]})`;
+        indice = (indice + 1) % fondos.length;
+    }
+
+    cambiarFondo();
+    setInterval(cambiarFondo, 5000);
+</script>
+
+</body>
+</html>

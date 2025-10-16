@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Factura</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f9f9f9;
+            padding: 30px;
+        }
+        .invoice-container {
+            max-width: 700px;
+            background: white;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-height: 80px;
+        }
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .invoice-total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+        }
+        .download-btn {
+            display: block;
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 25px;
+            text-decoration: none;
+        }
+        .download-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="invoice-container">
+  <div class="logo">
+    <img src="/images/logo.png" alt="Logo Empresa">
+  </div>
+
+  <div class="invoice-header">
+    <h2>Factura Nº <span th:text="${invoice.invoiceNumber}"></span></h2>
+    <p th:text="'Fecha: ' + ${invoice.date}"></p>
+    <p th:text="'Cliente: ' + ${invoice.customer.name}"></p>
+  </div>
+
+  <hr>
+
+  <div class="invoice-total">
+    Total a pagar: $<span th:text="${invoice.total}"></span>
+  </div>
+
+  <a th:href="@{'/invoices/' + ${invoice.id} + '/download'}" class="download-btn">Descargar PDF</a>
+</div>
+</body>
+</html>

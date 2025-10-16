@@ -1,102 +1,175 @@
 package com.joseLeo.ecommerce.service;
 
 import com.joseLeo.ecommerce.entity.*;
-import com.joseLeo.ecommerce.repository.CartRepository;
-import com.joseLeo.ecommerce.repository.OrderRepository;
-import com.joseLeo.ecommerce.repository.PaymentRepository;
+import com.joseLeo.ecommerce.repository.*;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
+import java.util.Map;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     private final CartRepository cartRepository;
-    private final CartService cartService;
-    private final PaymentRepository paymentRepository;
+    private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public OrderService(OrderRepository orderRepository,
+                        UserRepository userRepository,
                         CartRepository cartRepository,
-                        CartService cartService,
-                        PaymentRepository paymentRepository) {
+                        ProductRepository productRepository,
+                        OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
         this.cartRepository = cartRepository;
-        this.cartService = cartService;
-        this.paymentRepository = paymentRepository;
+        this.productRepository = productRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
-    // Obtener todas las órdenes
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
-    }
-
-    // Obtener una orden por ID
-    public Order getOrderById(Long id) {
-        return orderRepository.findById(id).orElse(null);
-    }
-
-    // Crear una orden desde el carrito del usuario
-    public Order createOrderFromCart(Long userId) {
-        Optional<Cart> optionalCart = cartService.getCartByUserId(userId);
-
-        if (optionalCart.isEmpty()) {
-            throw new RuntimeException("Carrito no encontrado para el usuario " + userId);
+    /** ✅ Crea una orden con todos los productos del carrito */
+    @Transactional
+    public Order createOrderForUser(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado");
         }
 
-        Cart cart = optionalCart.get();
-
-        if (cart.getItems() == null || cart.getItems().isEmpty()) {
-            throw new RuntimeException("Carrito vacío");
+        Cart existingCart = cartRepository.findByUserId(user.getId()).orElse(null);
+        if (existingCart == null || existingCart.getItems() == null || existingCart.getItems().isEmpty()) {
+            throw new RuntimeException("No hay productos en el carrito");
         }
 
-        // Crear la orden
         Order order = new Order();
-        order.setUser(cart.getUser());
+        order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus("PENDING");
 
-        // Copiar los items del carrito a la orden
-        List<OrderItem> orderItems = cart.getItems().stream()
-                .map(cartItem -> {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setProduct(cartItem.getProduct());
-                    orderItem.setQuantity(cartItem.getQuantity());
-                    orderItem.setPrice(cartItem.getProduct().getPrice()); // <--- set precio
-                    orderItem.setOrder(order); // relación bidireccional
-                    return orderItem;
-                })
-                .collect(Collectors.toList());
+        List<OrderItem> orderItems = new ArrayList<>();
+        double total = 0.0;
+
+        for (CartItem cartItem : existingCart.getItems()) {
+            Product product = cartItem.getProduct();
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(product);
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setPrice(product.getPrice());
+            orderItem.setOrder(order);
+            orderItems.add(orderItem);
+            total += product.getPrice() * cartItem.getQuantity();
+        }
 
         order.setItems(orderItems);
+        assignTotal(order, total);
 
-        // Guardar la orden
         Order savedOrder = orderRepository.save(order);
+        orderItemRepository.saveAll(orderItems);
 
-        // Crear el pago automáticamente
-        Payment payment = new Payment();
-        payment.setOrder(savedOrder);
-        payment.setAmount(savedOrder.calculateTotal());
-        payment.setMethod("MANUAL"); // o cualquier método por defecto
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setStatus(PaymentStatus.PENDING); // enum
-        paymentRepository.save(payment);
+        // 🧹 NO limpiar carrito aquí.
+        // Se vaciará solo cuando el pago esté confirmado exitosamente.
 
-        savedOrder.setPayment(payment);
-        orderRepository.save(savedOrder); // actualizar la orden con el pago
-
-        // Vaciar el carrito
-        cart.getItems().clear();
-        cartRepository.save(cart);
 
         return savedOrder;
     }
 
-    // Borrar una orden
-    public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
+    /** ✅ Crea una orden directa desde un producto individual */
+    @Transactional
+    public Order createDirectOrderForUser(String email, Long productId, int quantity) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setOrderDate(LocalDateTime.now());
+        order.setStatus("PENDING");
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setProduct(product);
+        orderItem.setQuantity(quantity);
+        orderItem.setPrice(product.getPrice());
+        orderItem.setOrder(order);
+
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem);
+        order.setItems(orderItems);
+
+        double total = product.getPrice() * quantity;
+        assignTotal(order, total);
+
+        Order savedOrder = orderRepository.save(order);
+        orderItemRepository.save(orderItem);
+
+        return savedOrder;
     }
+
+    /** ✅ Método unificado que maneja orden directa o de carrito */
+    @Transactional
+    public Order createOrderFromFrontend(Map<String, Object> orderData, String email) {
+        if (orderData == null || orderData.isEmpty()) {
+            throw new RuntimeException("Datos de orden vacíos");
+        }
+
+        Long productId = orderData.get("productId") != null
+                ? Long.parseLong(orderData.get("productId").toString())
+                : null;
+
+        Integer quantity = orderData.get("quantity") != null
+                ? Integer.parseInt(orderData.get("quantity").toString())
+                : null;
+
+        if (email == null || email.isEmpty()) {
+            throw new RuntimeException("Usuario no autenticado");
+        }
+
+        // 🟢 Si hay productId → compra directa
+        if (productId != null && quantity != null && quantity > 0) {
+            return createDirectOrderForUser(email, productId, quantity);
+        }
+
+        // 🟣 Si no, compra desde carrito
+        return createOrderForUser(email);
+    }
+
+    /** ✅ Listar todas las órdenes */
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    /** 🔧 Asignar el total independientemente del nombre del atributo */
+    private void assignTotal(Order order, double total) {
+        try {
+            order.getClass().getMethod("setTotalAmount", double.class).invoke(order, total);
+        } catch (NoSuchMethodException e) {
+            try {
+                order.getClass().getMethod("setTotal", double.class).invoke(order, total);
+            } catch (Exception ex) {
+                // sin campo total, se ignora
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al asignar total de la orden");
+        }
+    }
+
+    public User getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) throw new RuntimeException("Usuario no encontrado con email: " + email);
+        return user;
+    }
+
+    public void clearUserCart(Long userId) {
+        cartRepository.findByUserId(userId).ifPresent(cart -> {
+            cart.getItems().clear();
+            cartRepository.save(cart);
+        });
+    }
+
+
 }
