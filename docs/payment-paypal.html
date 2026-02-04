@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Pago con PayPal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.cdnfonts.com/css/bahnschrift');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Bahnschrift SemiLight', sans-serif;
+      color: black;
+      background: #000;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('/images/fondo3.jpg') center center no-repeat;
+      background-size: cover;
+      filter: blur(5px) brightness(0.45);
+      z-index: -2;
+    }
+
+    body { opacity: 0; animation: aparecer 0.6s ease-in-out forwards; }
+    @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+
+    header {
+      background-color: rgba(3,6,102,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100px;
+      padding: 0 30px;
+      z-index: 10;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    header .logo-container img { height: 150px; width: auto; }
+    header nav { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 25px; flex: 1; margin-left: 30px; }
+    header nav a { color: white; text-decoration: none; font-weight: bold; font-size: 1rem; transition: color 0.3s; }
+    header nav a:hover { color: #ffcc00; }
+
+    .contenedor {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+      padding-top: 140px;
+      padding-bottom: 100px;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.95);
+      padding: 28px;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      animation: cardAppear 0.8s ease-in-out;
+    }
+
+    @keyframes cardAppear { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .icon { font-size: 60px; color: #0070ba; margin-bottom: 20px; }
+    h1, h2 { color: #0070ba; margin-bottom: 10px; }
+    p { color: #222; margin-bottom: 12px; font-size: 16px; }
+
+    button {
+      background-color: #ffc439;
+      color: #111;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    button:hover { background-color: #ffb347; }
+
+    img.paypal-logo { width: 120px; margin: 15px 0; }
+
+    footer {
+      background: rgba(34,34,34,0.95);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 3;
+    }
+
+    @media screen and (max-width: 1024px) {
+      header { flex-direction: column; height: auto; padding: 10px; }
+      header .logo-container img { height: 100px; margin-bottom: 10px; }
+      header nav { gap: 10px; justify-content: center; margin-right: 0; }
+      .card { padding: 20px; max-width: 90%; }
+    }
+
+    @media screen and (max-width: 600px) { .card { padding: 16px; } }
+
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo-container">
+    <img src="/images/logo2_white4.png" alt="Titan Fishing Logo">
+  </div>
+  <nav>
+    <a href="/index.html">Inicio</a>
+    <a href="/tienda.html">Tienda</a>
+    <a href="/CarritodelUsuario.html">Carrito</a>
+    <a href="/lineasyanzuelos.html">Líneas y Anzuelos</a>
+    <a href="/senuelosycarnadas.html">Señuelos y Carnadas</a>
+  </nav>
+</header>
+
+<main class="contenedor">
+  <div class="card">
+    <div class="icon">💳</div>
+    <h2>Pagar con PayPal</h2>
+    <img class="paypal-logo" src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_111x69.jpg" alt="PayPal">
+    <p>Serás redirigido al sitio oficial de PayPal para completar tu pago.</p>
+    <button onclick="realizarPago()">Ir a PayPal</button>
+  </div>
+</main>
+
+<footer>
+  &copy; 2025 Titan Fishing | Síguenos en redes sociales
+</footer>
+
+<script>
+    function realizarPago() {
+      alert("🔗 Redirigiendo a PayPal...");
+      window.location.href = "https://www.paypal.com";
+    }
+</script>
+</body>
+</html>

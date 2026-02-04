@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Líneas y Anzuelos - Titan Fishing</title>
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/bahnschrift');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Bahnschrift SemiLight', sans-serif;
+            color: black;
+            overflow-x: hidden;
+            background: #000;
+        }
+
+        body {
+            opacity: 0;
+            animation: aparecer 0.8s ease-in-out forwards;
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/images/lineasyanzuelosfondo.jpg') center center no-repeat;
+            background-size: cover;
+            filter: blur(5px) brightness(0.5);
+            z-index: -2;
+        }
+
+        /* === HEADER NUEVO (igual al de SEÑUELOS Y CARNADAS) === */
+        header {
+            background-color: rgba(3,6,102,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            padding: 0 30px;
+            z-index: 10;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        header .logo-container img {
+            height: 150px;
+            width: auto;
+        }
+
+        header nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            flex: 1;
+            margin-left: 30px;
+        }
+
+        header nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        header nav a:hover {
+            color: #ffcc00;
+        }
+
+        /* === CONTENIDO === */
+        .contenedor {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+            padding-top: 140px;
+            padding-bottom: 150px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .productos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+            max-width: 1300px;
+        }
+
+        .producto {
+            width: 380px;
+            height: 400px;
+            background: rgba(255,255,255,0.35);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            text-align: center;
+            transition: transform 0.3s, background 0.3s;
+            text-decoration: none;
+            color: black;
+            position: relative;
+        }
+
+        .producto:hover {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.45);
+        }
+
+        .producto img.first, .producto img.second {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .producto img.second {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .producto:hover img.first { opacity: 0; }
+        .producto:hover img.second { opacity: 1; }
+
+        .producto h3 {
+            margin: 5px 0 3px 0;
+            font-size: 1.3rem;
+            color: #030666;
+        }
+
+        .producto p {
+            margin: 2px 10px 5px 10px;
+            font-size: 1rem;
+        }
+
+        .precio {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #036;
+        }
+
+        footer {
+            background: rgba(34,34,34,0.95);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            z-index: 3;
+        }
+
+        @media screen and (max-width: 1024px) {
+            header {
+                flex-direction: column;
+                height: auto;
+                padding: 10px 10px;
+            }
+            header .logo-container img { height: 100px; margin-bottom: 10px; }
+            header nav { gap: 10px; justify-content: center; margin-right: 0; }
+        }
+
+        @media screen and (max-width: 900px) {
+            .producto { width: 300px; height: 350px; }
+            .producto img.first, .producto img.second { height: 240px; }
+        }
+
+        @media screen and (max-width: 600px) {
+            .producto { width: 90%; height: auto; }
+            .producto img.first, .producto img.second { height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <img src="/images/logo2_white4.png" alt="Titan Fishing Logo">
+    </div>
+    <nav>
+        <a href="../index.html">Inicio</a>
+        <a href="../tienda.html">Tienda</a>
+        <a href="../CarritodelUsuario.html">Carrito</a>
+        <a href="#">Mi cuenta</a>
+    </nav>
+</header>
+
+<main class="contenedor">
+    <h1>Líneas y Anzuelos</h1>
+
+    <div class="productos">
+        <!-- Producto Hilo StrongLine -->
+        <a href="Hilo Monofilamento StrongLine 0.30mm.html" class="producto-link">
+            <div class="producto">
+                <img src="/images/HiloStrong.jpg" alt="Hilo Monofilamento StrongLine 0.30mm" class="first">
+                <img src="/images/HiloStrong2.jpeg" alt="Hilo Monofilamento StrongLine 0.30mm" class="second">
+                <h3>Hilo Monofilamento StrongLine 0.30mm</h3>
+                <p>Alta resistencia y durabilidad para tus líneas de pesca.</p>
+                <div class="precio">$6.50</div>
+            </div>
+        </a>
+
+        <a href="HiloTrenzadoPowerBraided.html" class="producto-link">
+            <div class="producto">
+                <img src="/images/HiloPower.jpg" alt="Hilo Trenzado PowerBraided 0.25mm" class="first">
+                <img src="/images/HiloPower2.jpg" alt="Hilo Trenzado PowerBraided 0.25mm" class="second">
+                <h3>Hilo Trenzado PowerBraided 0.25mm</h3>
+                <p>Perfecto para pesca exigente con gran resistencia a la abrasión.</p>
+                <div class="precio">$8.99</div>
+            </div>
+        </a>
+
+        <a href="AnzuelosClassicHook.html" class="producto-link">
+            <div class="producto">
+                <img src="/images/Anzueloclasic.jpg" alt="Anzuelos ClassicHook 50 piezas" class="first">
+                <img src="/images/Anzueloclasic2.jpg" alt="Anzuelos ClassicHook 50 piezas" class="second">
+                <h3>Anzuelos ClassicHook 50 piezas</h3>
+                <p>Calidad confiable para todo tipo de pesca.</p>
+                <div class="precio">$4.99</div>
+            </div>
+        </a>
+
+        <a href="PlomosRedondo.html" class="producto-link">
+            <div class="producto">
+                <img src="/images/plomoredondo.jpg" alt="Plomos Redondo 20 unidades" class="first">
+                <img src="/images/plomoredondo2.jpg" alt="Plomos Redondo 20 unidades" class="second">
+                <h3>Plomos Redondo 20 unidades</h3>
+                <p>Perfectos para mantener tu cebo en la profundidad deseada.</p>
+                <div class="precio">$3.50</div>
+            </div>
+        </a>
+
+        <a href="FlotadoresEasyFloat.html" class="producto-link">
+            <div class="producto">
+                <img src="/images/flotadoreseasy.jpg" alt="Flotadores EasyFloat 10 unidades" class="first">
+                <img src="/images/flotadoreseasy2.jpg" alt="Flotadores EasyFloat 10 unidades" class="second">
+                <h3>Flotadores EasyFloat 10 unidades</h3>
+                <p>Flotación estable y visible para tus jornadas de pesca.</p>
+                <div class="precio">$5.99</div>
+            </div>
+        </a>
+    </div>
+</main>
+
+<footer>
+    &copy; 2025 Titan Fishing | Síguenos en redes sociales
+</footer>
+
+</body>
+</html>
